@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Header from "./components/Header";
+import NoCoDisplay from "./components/NoCoDisplay";
+import NoCoInput from "./components/NoCoInput";
 
-function App() {
+const App = () => {
+  const [departments, setDepartments] = useState([]);
+  const [noCo, setNoCo] = useState([]);
+  const [coAc, setCoAc] = useState([]);
+
+  useEffect(() => {
+    const getDepartments = async () => {
+      const departments = await axios.get("http://localhost:3000/departments");
+      setDepartments(departments.data);
+    };
+
+    getDepartments();
+
+    const getNoCo = async () => {
+      const noCo = await axios.get("http://localhost:3000/non-conformities");
+      setNoCo(noCo.data);
+    };
+
+    getNoCo();
+
+    const getCoAc = async () => {
+      const coAc = await axios.get("http://localhost:3000/corrective-actions");
+      setCoAc(coAc.data);
+    };
+
+    getCoAc();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <NoCoInput
+        departments={departments}
+        // setDescription={setDescription}
+        // setDate={setDate}
+        // setInputDepartments={setInputDepartments}
+        // setWhat={setWhat}
+        // setWhy={setWhy}
+        // setHow={setHow}
+        // setWhere={setWhere}
+        // setUntil={setUntil}
+      />
+      <NoCoDisplay noCo={noCo} coAc={coAc} departments={departments} />
     </div>
   );
-}
+};
 
 export default App;

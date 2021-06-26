@@ -1,0 +1,54 @@
+.nocoinput-container {
+  max-width: 1200px;
+  margin: auto;
+  font-family: "Titillium Web", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.nocoinput {
+  display: flex;
+  justify-content: space-between;
+  margin: 32px 0 32px 0;
+  align-items: center;
+}
+
+textarea {
+  box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
+}
+
+label {
+  font-size: 16px;
+}
+
+input {
+  height: 38px;
+  box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
+}
+
+.coacinput-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.department-checkbox {
+  margin: 16px;
+}
+
+button {
+  margin: 20px 0;
+  height: 42px;
+  width: 200px;
+  background-color: #14687a;
+  border-radius: 8px;
+  background-color: #24a0ed;
+  border: none;
+  color: white;
+  box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
+  align-self: center;
+}

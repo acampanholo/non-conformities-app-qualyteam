@@ -1,0 +1,15 @@
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #14687a;
+  font-size: 48px;
+  min-height: 80px;
+
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  font-family: "Titillium Web", sans-serif;
+}
+
+header {
+  font-family: "Titillium Web", sans-serif;
+}
