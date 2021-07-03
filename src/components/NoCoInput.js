@@ -1,23 +1,22 @@
 import React, { useState } from "react";
 import "./styles/NoCoInput.css";
 import axios from "axios";
+import CoAcInput from "./CoAcInput";
+import CoAcObject from "./modules/CoAcObject";
+
+const inputArrayCounter = ["a"];
+const correctiveActions = [];
 
 const NoCoInput = (props) => {
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [inputDepartments, setInputDepartments] = useState([]);
-  const [departmentId, setDepartmentId] = useState([]);
-  const [coAcId, setCoAcId] = useState([]);
-  const [what, setWhat] = useState("");
-  const [why, setWhy] = useState("");
-  const [how, setHow] = useState("");
-  const [where, setWhere] = useState("");
-  const [until, setUntil] = useState("");
+  const [inputCounter, setInputCounter] = useState(1);
+  const [coacInput, setCoacInput] = useState({});
+  const [nocoInput, setNocoInput] = useState({});
 
   const renderedSelect = props.departments.map((option) => {
     return (
       <React.Fragment>
         <input
+          key={option.id}
           type="checkbox"
           className="department-checkbox"
           id={option.id}
@@ -29,10 +28,14 @@ const NoCoInput = (props) => {
               "input[type=checkbox]:checked"
             );
             for (let i = 0; i < checkboxes.length; i++) {
-              depId.push(checkboxes[i].value);
+              depId.push(parseInt(checkboxes[i].value));
             }
+            console.log(depId);
 
-            setDepartmentId(depId);
+            setNocoInput((state) => ({
+              ...nocoInput,
+              depId: depId,
+            }));
           }}
         />
         <label for={option.name}>{option.name}</label>
@@ -40,51 +43,97 @@ const NoCoInput = (props) => {
     );
   });
 
-  let temp;
-
-  const postFormValues = (e) => {
+  const postFormValues = async (e) => {
     e.preventDefault();
 
-    const correctiveActions = {
-      what: what,
-      why: why,
-      how: how,
-      where: where,
-      until: until,
-    };
-
-    // console.log(nonConformities);
-    let temp;
+    if (coacInput[`what${inputCounter}`]) {
+      correctiveAction = new CoAcObject();
+      correctiveAction[`what-to-do`] = coacInput[`what${inputCounter}`];
+      correctiveAction[`why-to-do-it`] = coacInput[`why${inputCounter}`];
+      correctiveAction[`how-to-do-it`] = coacInput[`how${inputCounter}`];
+      correctiveAction[`where-to-do-it`] = coacInput[`where${inputCounter}`];
+      correctiveAction[`until-when`] = coacInput[`until${inputCounter}`];
+      correctiveActions.push(correctiveAction);
+    }
 
     const postCoAc = async () => {
-      const response = await axios
-        .post("http://localhost:3000/corrective-actions", correctiveActions)
-        .then((response) => {
-          temp = response.data.id;
-          return temp;
-        });
-      setCoAcId(temp);
+      const postVariables = correctiveActions.map(
+        async (correctiveAction, index) => {
+          const temp = await axios.post(
+            "http://localhost:3000/corrective-actions",
+            correctiveAction
+          );
+          return await temp.data;
+        }
+      );
+
+      const responsesCoAc = await Promise.all(
+        postVariables.map((nino) => {
+          return nino;
+        })
+      );
+
+      const ids = responsesCoAc.map((response) => {
+        return response.id;
+      });
+
+      console.log(ids);
+
+      const nonConformities = {
+        description: nocoInput.description,
+        "ocurrence-date": nocoInput.date,
+        departments: nocoInput.depId,
+        "corrective-actions": ids,
+      };
+
+      const responsesNoCo = await axios.post(
+        "http://localhost:3000/non-conformities",
+        nonConformities
+      );
+
+      console.log(nonConformities);
     };
 
     postCoAc();
+  };
 
-    console.log(coAcId);
+  let correctiveAction;
 
-    const nonConformities = {
-      description: description,
-      "occurence-date": date,
-      departments: departmentId,
-      "corrective-actions": coAcId,
-    };
+  const handleInputCounter = (e) => {
+    e.preventDefault();
+    inputArrayCounter.unshift("a");
+    setInputCounter(inputCounter + 1);
+
+    if (coacInput[`what${inputCounter}`]) {
+      correctiveAction = new CoAcObject();
+      correctiveAction[`what-to-do`] = coacInput[`what${inputCounter}`];
+      correctiveAction[`why-to-do-it`] = coacInput[`why${inputCounter}`];
+      correctiveAction[`how-to-do-it`] = coacInput[`how${inputCounter}`];
+      correctiveAction[`where-to-do-it`] = coacInput[`where${inputCounter}`];
+      correctiveAction[`until-when`] = coacInput[`until${inputCounter}`];
+
+      correctiveActions.push(correctiveAction);
+    }
+  };
+
+  const handleInputDelete = (e) => {
+    e.preventDefault();
+    if (inputCounter !== 1) {
+      inputArrayCounter.shift("a");
+      setInputCounter(inputCounter - 1);
+    }
   };
 
   return (
-    <form className="nocoinput-container" onSubmit={postFormValues}>
+    <form className="nocoinput-container">
       <div className="nocoinput">
         <label for="description-input">Description: </label>
         <textarea
           onChange={(e) => {
-            setDescription(e.target.value);
+            setNocoInput((state) => ({
+              ...nocoInput,
+              description: e.target.value,
+            }));
           }}
           id="description-input"
           rows="3"
@@ -94,7 +143,10 @@ const NoCoInput = (props) => {
         <label for="date-input">Occurence date: </label>
         <input
           onChange={(e) => {
-            setDate(e.target.value);
+            setNocoInput((state) => ({
+              ...nocoInput,
+              date: e.target.value,
+            }));
           }}
           type="text"
           id="date-input"
@@ -103,9 +155,6 @@ const NoCoInput = (props) => {
 
         <label for="department-input">Department: </label>
         <div
-          onChange={(e) => {
-            setInputDepartments(e.target.value);
-          }}
           name="deparment"
           id="department-input"
           className="checkbox-container">
@@ -113,63 +162,34 @@ const NoCoInput = (props) => {
         </div>
       </div>
 
-      <div className="coacinput-container">
-        Corrective actions:
-        <label>What: </label>
-        <textarea
-          onChange={(e) => {
-            setWhat(e.target.value);
-          }}
-          className="coacinput"
-          id="what"
-          rows="3"
-          cols="15"
-        />
-        <label>Why: </label>
-        <textarea
-          onChange={(e) => {
-            setWhy(e.target.value);
-          }}
-          className="coacinput"
-          id="why"
-          rows="3"
-          cols="15"
-        />
-        <label>How: </label>
-        <textarea
-          onChange={(e) => {
-            setHow(e.target.value);
-          }}
-          className="coacinput"
-          id="how"
-          rows="3"
-          cols="15"
-        />
-        <label>Where: </label>
-        <textarea
-          onChange={(e) => {
-            setWhere(e.target.value);
-          }}
-          className="coacinput"
-          id="where"
-          rows="3"
-          cols="15"
-        />
-        <label>Until: </label>
-        <textarea
-          onChange={(e) => {
-            setUntil(e.target.value);
-          }}
-          className="coacinput"
-          id="until"
-          rows="3"
-          cols="15"
+      <div>
+        <CoAcInput
+          inputCounter={inputCounter}
+          coacInput={coacInput}
+          setCoacInput={setCoacInput}
+          inputArrayCounter={inputArrayCounter}
         />
       </div>
-
-      <button className="ui primary button" type="submit">
-        Submit
-      </button>
+      <div className="button-container">
+        <button
+          className="submit-button"
+          type="submit"
+          onClick={postFormValues}>
+          Submit
+        </button>
+        <button
+          type="button"
+          className="coac-button"
+          onClick={handleInputCounter}>
+          New corrective action
+        </button>
+        <button
+          type="button"
+          className="coac-button"
+          onClick={handleInputDelete}>
+          Delete corrective action
+        </button>
+      </div>
     </form>
   );
 };
