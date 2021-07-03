@@ -13,15 +13,15 @@
   align-items: center;
 }
 
-textarea {
+.nocoinput-container textarea {
   box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
 }
 
-label {
+.nocoinput-container label {
   font-size: 16px;
 }
 
-input {
+.nocoinput-container input {
   height: 38px;
   box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
 }
@@ -46,7 +46,7 @@ input {
   justify-content: center;
 }
 
-button {
+.button-container button {
   margin: 20px;
   height: 42px;
   width: 200px;

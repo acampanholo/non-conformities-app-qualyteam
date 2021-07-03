@@ -2,12 +2,17 @@ import React from "react";
 import "./styles/NoCoDisplay.css";
 
 const NoCoDisplay = (props) => {
-  console.log(props.coAc);
+  console.log(props.noCo);
   const renderedNoCo = props.noCo.map((noCo) => {
     return (
       <div className="noco-container" key={noCo.id}>
-        <p>Description: </p>
-        <p className="description">{noCo.description}</p>
+        <ul className="description">
+          Description:
+          <li>{noCo.description}</li>
+        </ul>
+
+        {/* <p>Description: </p>
+        <p className="description">{noCo.description}</p> */}
         <ul>
           Ocurrence date:
           <li className="date">{noCo[`ocurrence-date`]}</li>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Header from "./components/Header";
 import NoCoDisplay from "./components/NoCoDisplay";
 import NoCoInput from "./components/NoCoInput";
+import SearchBar from "./components/SearchBar";
 
 const App = () => {
   const [departments, setDepartments] = useState([]);
@@ -35,6 +36,7 @@ const App = () => {
   return (
     <div>
       <Header />
+      <SearchBar />
       <NoCoInput
         departments={departments}
         // setDescription={setDescription}

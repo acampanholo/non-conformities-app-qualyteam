@@ -11,6 +11,7 @@ const NoCoInput = (props) => {
   const [inputCounter, setInputCounter] = useState(1);
   const [coacInput, setCoacInput] = useState({});
   const [nocoInput, setNocoInput] = useState({});
+  const [nonConformities, setNonConformities] = useState([]);
 
   const renderedSelect = props.departments.map((option) => {
     return (

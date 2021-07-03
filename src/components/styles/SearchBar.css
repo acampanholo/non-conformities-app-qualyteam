@@ -1,0 +1,44 @@
+.searchbar-container {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+  justify-content: space-around;
+  margin-top: 32px;
+}
+
+.searchbar {
+  display: none;
+  width: 1000px;
+
+  align-items: center;
+  justify-content: space-around;
+
+  font-family: "Titillium Web", sans-serif;
+}
+
+.searchbar input {
+  height: 38px;
+  box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
+  width: 200px;
+}
+
+.searchbar-container button {
+  margin: 20px;
+  height: 42px;
+  width: 42px;
+  background-color: #14687a;
+  border-radius: 8px;
+  background-color: #24a0ed;
+  border: none;
+  color: white;
+  box-shadow: 2px 2px 6px -1px rgba(0, 0, 0, 0.47);
+  align-self: center;
+}
+
+.searchbar-container button i {
+  font-size: 20px;
+}
+
+.active {
+  display: flex;
+}
