@@ -10,6 +10,10 @@ const App = () => {
   const [noCo, setNoCo] = useState([]);
   const [coAc, setCoAc] = useState([]);
 
+  const [searchDate, setSearchDate] = useState("");
+  const [searchDesc, setSearchDesc] = useState("");
+  const [searchDept, setSearchDept] = useState("");
+
   useEffect(() => {
     const getDepartments = async () => {
       const departments = await axios.get("http://localhost:3000/departments");
@@ -19,11 +23,28 @@ const App = () => {
     getDepartments();
 
     const getNoCo = async () => {
-      const noCo = await axios.get("http://localhost:3000/non-conformities");
-      setNoCo(noCo.data);
+      if (searchDate !== "") {
+        const noCo = await axios.get(
+          `http://localhost:3000/non-conformities?ocurrence-date=${searchDate}`
+        );
+        setNoCo(noCo.data);
+      } else if (searchDesc !== "") {
+        const noCo = await axios.get(
+          `http://localhost:3000/non-conformities?description_like=${searchDesc}`
+        );
+        setNoCo(noCo.data);
+      } else if (searchDept !== "") {
+        const noCo = await axios.get(
+          `http://localhost:3000/non-conformities?departments.0=${searchDept}`
+        );
+        setNoCo(noCo.data);
+      } else {
+        const noCo = await axios.get("http://localhost:3000/non-conformities");
+        setNoCo(noCo.data);
+      }
     };
 
-    getNoCo();
+    setTimeout(getNoCo, 1000);
 
     const getCoAc = async () => {
       const coAc = await axios.get("http://localhost:3000/corrective-actions");
@@ -31,23 +52,18 @@ const App = () => {
     };
 
     getCoAc();
-  }, []);
+  }, [noCo]);
 
   return (
     <div>
       <Header />
-      <SearchBar />
-      <NoCoInput
+      <SearchBar
+        setSearchDate={setSearchDate}
+        setSearchDept={setSearchDept}
+        setSearchDesc={setSearchDesc}
         departments={departments}
-        // setDescription={setDescription}
-        // setDate={setDate}
-        // setInputDepartments={setInputDepartments}
-        // setWhat={setWhat}
-        // setWhy={setWhy}
-        // setHow={setHow}
-        // setWhere={setWhere}
-        // setUntil={setUntil}
       />
+      <NoCoInput departments={departments} />
       <NoCoDisplay noCo={noCo} coAc={coAc} departments={departments} />
     </div>
   );

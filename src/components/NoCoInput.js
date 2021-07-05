@@ -11,13 +11,11 @@ const NoCoInput = (props) => {
   const [inputCounter, setInputCounter] = useState(1);
   const [coacInput, setCoacInput] = useState({});
   const [nocoInput, setNocoInput] = useState({});
-  const [nonConformities, setNonConformities] = useState([]);
 
-  const renderedSelect = props.departments.map((option) => {
+  const renderedSelect = props.departments.map((option, index) => {
     return (
-      <React.Fragment>
+      <div key={index} className="checkbox-pair">
         <input
-          key={option.id}
           type="checkbox"
           className="department-checkbox"
           id={option.id}
@@ -28,26 +26,44 @@ const NoCoInput = (props) => {
             const checkboxes = document.querySelectorAll(
               "input[type=checkbox]:checked"
             );
-            for (let i = 0; i < checkboxes.length; i++) {
-              depId.push(parseInt(checkboxes[i].value));
+            if (checkboxes.length) {
+              for (let i = 0; i < checkboxes.length; i++) {
+                depId.push(parseInt(checkboxes[i].value - 1));
+              }
+              setNocoInput((state) => ({
+                ...nocoInput,
+                depId: depId,
+              }));
+            } else {
+              depId.push(3);
+              setNocoInput((state) => ({
+                ...nocoInput,
+                depId: depId,
+              }));
             }
-            console.log(depId);
 
-            setNocoInput((state) => ({
-              ...nocoInput,
-              depId: depId,
-            }));
+            console.log(depId);
           }}
         />
-        <label for={option.name}>{option.name}</label>
-      </React.Fragment>
+        <label for={option.id}>{option.name}</label>
+      </div>
     );
   });
 
   const postFormValues = async (e) => {
     e.preventDefault();
+    let nonConformities = {};
 
-    if (coacInput[`what${inputCounter}`]) {
+    if (
+      nocoInput.description &&
+      nocoInput.date &&
+      nocoInput.depId &&
+      coacInput[`what${inputCounter}`] &&
+      coacInput[`why${inputCounter}`] &&
+      coacInput[`how${inputCounter}`] &&
+      coacInput[`where${inputCounter}`] &&
+      coacInput[`until${inputCounter}`]
+    ) {
       correctiveAction = new CoAcObject();
       correctiveAction[`what-to-do`] = coacInput[`what${inputCounter}`];
       correctiveAction[`why-to-do-it`] = coacInput[`why${inputCounter}`];
@@ -55,22 +71,26 @@ const NoCoInput = (props) => {
       correctiveAction[`where-to-do-it`] = coacInput[`where${inputCounter}`];
       correctiveAction[`until-when`] = coacInput[`until${inputCounter}`];
       correctiveActions.push(correctiveAction);
+    } else {
+      alert("Please fill all fields");
+      return;
     }
 
     const postCoAc = async () => {
       const postVariables = correctiveActions.map(
         async (correctiveAction, index) => {
-          const temp = await axios.post(
-            "http://localhost:3000/corrective-actions",
-            correctiveAction
-          );
-          return await temp.data;
+          const temp = await axios
+            .post("http://localhost:3000/corrective-actions", correctiveAction)
+            .catch((error) => {
+              alert("Error. Please refresh the page and try again.");
+            });
+          return temp.data;
         }
       );
 
       const responsesCoAc = await Promise.all(
-        postVariables.map((nino) => {
-          return nino;
+        postVariables.map((responseCoAc) => {
+          return responseCoAc;
         })
       );
 
@@ -80,19 +100,24 @@ const NoCoInput = (props) => {
 
       console.log(ids);
 
-      const nonConformities = {
-        description: nocoInput.description,
-        "ocurrence-date": nocoInput.date,
-        departments: nocoInput.depId,
-        "corrective-actions": ids,
-      };
+      if (nocoInput.description && nocoInput.date && nocoInput.depId) {
+        nonConformities = {
+          description: nocoInput.description,
+          "ocurrence-date": nocoInput.date,
+          departments: nocoInput.depId,
+          "corrective-actions": ids,
+        };
+      } else {
+        alert("Please fill all fields.");
+        return;
+      }
 
-      const responsesNoCo = await axios.post(
-        "http://localhost:3000/non-conformities",
-        nonConformities
-      );
-
-      console.log(nonConformities);
+      const responsesNoCo = await axios
+        .post("http://localhost:3000/non-conformities", nonConformities)
+        .then(alert("Nonconformity successfully added."))
+        .catch((error) => {
+          alert("Error. Please refresh the page and try again.");
+        });
     };
 
     postCoAc();
@@ -105,7 +130,16 @@ const NoCoInput = (props) => {
     inputArrayCounter.unshift("a");
     setInputCounter(inputCounter + 1);
 
-    if (coacInput[`what${inputCounter}`]) {
+    if (
+      nocoInput.description &&
+      nocoInput.date &&
+      nocoInput.depId &&
+      coacInput[`what${inputCounter}`] &&
+      coacInput[`why${inputCounter}`] &&
+      coacInput[`how${inputCounter}`] &&
+      coacInput[`where${inputCounter}`] &&
+      coacInput[`until${inputCounter}`]
+    ) {
       correctiveAction = new CoAcObject();
       correctiveAction[`what-to-do`] = coacInput[`what${inputCounter}`];
       correctiveAction[`why-to-do-it`] = coacInput[`why${inputCounter}`];
@@ -128,7 +162,9 @@ const NoCoInput = (props) => {
   return (
     <form className="nocoinput-container">
       <div className="nocoinput">
-        <label for="description-input">Description: </label>
+        <label className="input-label" for="description-input">
+          Description:{" "}
+        </label>
         <textarea
           onChange={(e) => {
             setNocoInput((state) => ({
@@ -141,7 +177,9 @@ const NoCoInput = (props) => {
           cols="33"
         />
 
-        <label for="date-input">Occurence date: </label>
+        <label className="input-label" for="date-input">
+          Occurence date:{" "}
+        </label>
         <input
           onChange={(e) => {
             setNocoInput((state) => ({
@@ -154,9 +192,11 @@ const NoCoInput = (props) => {
           placeholder="dd-mm-yyyy"
         />
 
-        <label for="department-input">Department: </label>
+        <label className="input-label" for="department-input">
+          Department:{" "}
+        </label>
         <div
-          name="deparment"
+          name="department"
           id="department-input"
           className="checkbox-container">
           {renderedSelect}
@@ -188,8 +228,9 @@ const NoCoInput = (props) => {
           type="button"
           className="coac-button"
           onClick={handleInputDelete}>
-          Delete corrective action
+          Delete corrective action fields
         </button>
+        <button type="reset">Clear</button>
       </div>
     </form>
   );

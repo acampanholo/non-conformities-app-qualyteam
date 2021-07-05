@@ -1,7 +1,5 @@
 import React from "react";
 
-const temp = ["a"];
-
 const CoAcInput = (props) => {
   const renderCoAcInput = props.inputArrayCounter.map((temp, index) => {
     return (

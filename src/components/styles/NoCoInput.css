@@ -8,7 +8,7 @@
 
 .nocoinput {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin: 32px 0 32px 0;
   align-items: center;
 }
@@ -34,7 +34,14 @@
 
 .checkbox-container {
   display: flex;
+
+  flex-wrap: wrap;
+}
+
+.checkbox-pair {
+  display: flex;
   align-items: center;
+  justify-content: space-evenly;
 }
 
 .department-checkbox {
@@ -62,3 +69,11 @@
 /* .coac-button {
   margin-top: 0px;
 } */
+
+.input-label {
+  margin-left: 20px;
+}
+
+.input-label:first-child {
+  margin-left: 0px;
+}
