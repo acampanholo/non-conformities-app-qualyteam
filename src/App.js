@@ -44,7 +44,7 @@ const App = () => {
       }
     };
 
-    setTimeout(getNoCo, 1000);
+    setTimeout(getNoCo, 500);
 
     const getCoAc = async () => {
       const coAc = await axios.get("http://localhost:3000/corrective-actions");
