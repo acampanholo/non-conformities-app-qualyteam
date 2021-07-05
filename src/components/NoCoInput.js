@@ -79,12 +79,12 @@ const NoCoInput = (props) => {
     const postCoAc = async () => {
       const postVariables = correctiveActions.map(
         async (correctiveAction, index) => {
-          const temp = await axios
+          const promise = await axios
             .post("http://localhost:3000/corrective-actions", correctiveAction)
             .catch((error) => {
               alert("Error. Please refresh the page and try again.");
             });
-          return temp.data;
+          return promise.data;
         }
       );
 

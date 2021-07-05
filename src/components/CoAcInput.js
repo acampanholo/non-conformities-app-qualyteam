@@ -1,7 +1,7 @@
 import React from "react";
 
 const CoAcInput = (props) => {
-  const renderCoAcInput = props.inputArrayCounter.map((temp, index) => {
+  const renderCoAcInput = props.inputArrayCounter.map((count, index) => {
     return (
       <div className="coacinput-container" key={index}>
         Corrective actions:

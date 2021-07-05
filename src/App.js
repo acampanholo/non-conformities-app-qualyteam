@@ -61,7 +61,6 @@ const App = () => {
         setSearchDate={setSearchDate}
         setSearchDept={setSearchDept}
         setSearchDesc={setSearchDesc}
-        departments={departments}
       />
       <NoCoInput departments={departments} />
       <NoCoDisplay noCo={noCo} coAc={coAc} departments={departments} />
