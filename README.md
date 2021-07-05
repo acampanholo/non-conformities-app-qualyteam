@@ -15,7 +15,7 @@ If you want to add more than one corrective action, click on the button "New cor
 
 ## Search
 
-To search for a nonconformity, use one of the three search filters available: Date, Description and Department. A new list will be shown on the screen after a short moment.
+To search for a nonconformity, first click on the search icon to toggle the search bar. Use one of the three search filters available: Date, Description and Department. After typing the search term, a new list will be shown on the screen after a short moment.
 
 
 
